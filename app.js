@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const path = require('path');
 const authRoutes = require('./Routes/routes-auth');
 const steamRoutes = require('./Routes/steam-auth-routes');
+const gamesRoute = require('./Routes/games-routes');
+const steamDataRoutes = require('./Routes/steam-data-routes');
 const passport = require('passport');
 const SteamStrategy = require('passport-steam').Strategy;
 const SteamUser = require('./Models/steam');
@@ -58,6 +60,10 @@ app.use(bodyParser.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', steamRoutes);
+
+app.use('/api/games', gamesRoute);
+
+app.use('/api/steam', steamDataRoutes);
 
 
 module.exports = app;
