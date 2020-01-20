@@ -1,0 +1,1 @@
+exports.mailSignup = "<h1> Bienvenue sur See My Games ! </h1> <br/> <p> Cet email confirme votre inscription à notre site See My Games. Vous pouvez désormais vous connecter sur <a alt='page login' target='_blank' href='http://localhost:3000/connexion/'> notre site </a> et utiliser ses fonctionnalités </p>";
