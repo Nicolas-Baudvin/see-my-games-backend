@@ -35,11 +35,10 @@ Code source du back end pour l'application web See My Games
 - [x] Update de l'email après confirmation du changement d'email
 - [x] Envoie d'un email pour confirmation de changement de mot de passe
 - [x] Update du mot de passe après confirmation du changement de mot de passe
-- [ ] Rajouter les vérifs grâce à express-validator
-- [ ] Realiser les vues post-confirmations mot de passe / email
-- [ ] Création d'un article
-- [ ] Modification d'un article
-- [ ] Suppression d'un article
-- [ ] Envoie d'un ou des articles
-- [ ] Système de modération
+- [x] Realiser les vues post-confirmations mot de passe / email
+- [x] Création d'un article
+- [x] Modification d'un article
+- [x] Suppression d'un article
+- [x] Envoie d'un ou des articles
 - [ ] Mise en place de socket.io pour la réalisation d'un chat.
+- [ ] Style des vues de confirmations email / mot de passe
