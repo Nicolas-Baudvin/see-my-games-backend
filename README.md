@@ -24,6 +24,12 @@
 - [x] Modification d'un jeu
 - [x] Suppression d'un jeu
 - [x] Recherche d'un jeu
+- [x] Enregistrer les jeux d'un compte steam
+- [x] Enregistrer les informations d'un utilisateur steam
+- [x] Envoyer les données d'un jeu steam
 - [ ] Envoie d'un email pour confirmation de changement de mot de passe
 - [ ] Envoie d'un email pour confirmation de changement d'email
-- [ ] Enregistrer les jeux d'un compte steam
+- [ ] Création d'un article
+- [ ] Modification d'un article
+- [ ] Suppression d'un article
+- [ ] Envoie d'un ou des articles
