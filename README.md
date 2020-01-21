@@ -27,9 +27,15 @@
 - [x] Enregistrer les jeux d'un compte steam
 - [x] Enregistrer les informations d'un utilisateur steam
 - [x] Envoyer les données d'un jeu steam
-- [ ] Envoie d'un email pour confirmation de changement de mot de passe
-- [ ] Envoie d'un email pour confirmation de changement d'email
+- [x] Envoie d'un email pour confirmation de changement d'email
+- [x] Update de l'email après confirmation du changement d'email
+- [x] Envoie d'un email pour confirmation de changement de mot de passe
+- [x] Update du mot de passe après confirmation du changement de mot de passe
+- [ ] Rajouter les vérifs grâce à express-validator
+- [ ] Realiser les vues post-confirmations mot de passe / email
 - [ ] Création d'un article
 - [ ] Modification d'un article
 - [ ] Suppression d'un article
 - [ ] Envoie d'un ou des articles
+- [ ] Système de modération
+- [ ] Mise en place de socket.io pour la réalisation d'un chat.
