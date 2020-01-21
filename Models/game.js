@@ -8,6 +8,7 @@ const gameShema = mongoose.Schema({
     appid: { type: Number, required: false },
     desc: { type: String, required: false },
     release_date: { type: String, required: false },
+    hand_added: { type: Boolean, required: false }
 });
 
 module.exports = mongoose.model('Game', gameShema);
