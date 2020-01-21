@@ -1,8 +1,9 @@
 const bcrypt = require('bcrypt');
-const User = require('../Models/user');
 const jwt = require('jsonwebtoken');
 const mailer = require('nodemailer');
-const mailType = require('../Data/mail')
+const mailType = require('../Data/mail');
+
+const User = require('../Models/user');
 
 exports.signup = (req, res, next) => {
     if (!req.body.password || !req.body.email || !req.body.confPassword || !req.body.username) {
@@ -50,12 +51,10 @@ exports.signup = (req, res, next) => {
                 .catch(err => {
                     res.status(500).json({ err });
                 })
-
         }
         else {
             res.status(403).json({ message: "Le mot de passe doit contenir 6 caractères minimum" });
         }
-
     } else {
         res.status(403).json({ message: "Les mots de passes sont différents !" });
     }
@@ -125,10 +124,60 @@ exports.update = (req, res, next) => {
     }
 }
 
-exports.mail_update = (req, res, next) => {
+exports.mail_update = async (req, res, next) => {
     // send mail to confirm change
+    const user = await User.findOne({ _id: req.body.userId });
+    if (!user) {
+        return res.status(400).json({ message: "Vous n'êtes pas connecté !" });
+    }
+    const token = jwt.sign({ userId: user._id, email: user.email, new_email: req.body.new_email }, process.env.TOKEN_SECRET_KEY, { expiresIn: '1h' });
+    const link = `http://localhost:5000/api/auth/confirm-email/${token}`;
+    const smtpTransport = mailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: process.env.EMAIL_SMTP,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    });
+    const mail = {
+        from: process.env.EMAIL_SMTP,
+        to: user.email,
+        subject: "SMG - Confirmation de changement d'email",
+        html: mailType.mail_confirm(link)
+    }
+    smtpTransport.sendMail(mail, (err, result) => {
+        if (err) {
+            console.log("Erreur lors de l'envoie du mail: ", err);
+            res.status(500).json({ message: "Une erreur est survenue lors de l'envoie du mail, veuillez réessayer.", err });
+        }
+        else {
+            console.log("Mail envoyé !", result);
+            res.status(200).json({ message: "Un email de confirmation a été envoyé sur votre boite mail !" });
+        }
+    });
 }
 
 exports.pass_update = (req, res, next) => {
     // send mail to confirm change
+}
+
+exports.confirm_mail_change = (req, res, next) => {
+    // confirm change & update database
+    const token = req.params.token;
+    const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
+    const userId = decodedToken.userId;
+    const newEmail = decodedToken.new_email;
+
+    User.updateOne({ _id: userId }, { email: newEmail })
+        .then(() => {
+            res.render('email-changed', { clientUrl: "http://localhost:3000/mon-compte/" });
+        })
+        .then(err => {
+            console.log(err);
+            res.status(500).json({ err });
+        })
+}
+
+exports.confirm_password_change = (req, res, next) => {
+    // confirm change & update database
 }
