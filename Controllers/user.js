@@ -6,9 +6,6 @@ const mailType = require('../Data/mail');
 const User = require('../Models/user');
 
 exports.signup = (req, res, next) => {
-    if (!req.body.password || !req.body.email || !req.body.confPassword || !req.body.username) {
-        return res.status(400).json({ message: "Tous les champs sont obligatoires" });
-    }
     if (req.body.password === req.body.confPassword) {
         if (req.body.password.length >= 6) {
 
@@ -53,14 +50,17 @@ exports.signup = (req, res, next) => {
                 })
         }
         else {
-            res.status(403).json({ message: "Le mot de passe doit contenir 6 caractères minimum" });
+            return res.status(403).json({ message: "Le mot de passe doit contenir 6 caractères minimum" });
         }
     } else {
-        res.status(403).json({ message: "Les mots de passes sont différents !" });
+        return res.status(403).json({ message: "Les mots de passes sont différents !" });
     }
 }
 
 exports.login = (req, res, next) => {
+    if (!req.body.username && !req.body.password) {
+        return res.status(400).json({message: "Tous les champs sont obligatoires"});
+    }
 
     User.findOne({ username: req.body.username })
         .then((user) => {
@@ -126,7 +126,7 @@ exports.update = (req, res, next) => {
 
 exports.mail_update = async (req, res, next) => {
     // send mail to confirm change
-    const user = await User.findOne({ _id: req.body.userId });
+    const user = User.findOne({ _id: req.body.userId });
     if (!user) {
         return res.status(400).json({ message: "Vous n'êtes pas connecté !" });
     }
@@ -157,7 +157,7 @@ exports.mail_update = async (req, res, next) => {
     });
 }
 
-exports.pass_update = (req, res, next) => {
+exports.pass_update = async (req, res, next) => {
     // send mail to confirm change
     let token;
 
