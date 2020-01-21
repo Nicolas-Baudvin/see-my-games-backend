@@ -35,7 +35,7 @@ app.set('views', path.join(__dirname, '/views'));
 passport.use(new SteamStrategy({
   returnURL: 'http://localhost:5000/api/auth/steam/return',
   realm: 'http://localhost:5000/',
-  apiKey: '18CFB98847781953BB031EA9DC0093D9'
+  apiKey: process.env.API_KEY
 },
   async function (identifier, profile, done) {
     profile.identifier = identifier;
@@ -58,12 +58,12 @@ app.use(passport.initialize());
 
 app.use(bodyParser.json());
 
+app.use('/api/steam', steamDataRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', steamRoutes);
 
 app.use('/api/games', gamesRoute);
 
-app.use('/api/steam', steamDataRoutes);
 
 
 module.exports = app;
