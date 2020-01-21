@@ -11,6 +11,7 @@ const steamDataRoutes = require('./Routes/steam-data-routes');
 const passport = require('passport');
 const SteamStrategy = require('passport-steam').Strategy;
 const SteamUser = require('./Models/steam');
+const postRoutes = require('./Routes/posts-routes');
 
 const app = express();
 
@@ -40,17 +41,17 @@ passport.use(new SteamStrategy({
   async function (identifier, profile, done) {
     profile.identifier = identifier;
 
-      let user = await SteamUser.findOne({ steamid: profile.id });
-      console.log(profile.id)
-      if (!user) {
-        user = await new SteamUser({
-          id: profile.id,
-          name: profile._json.personaname,
-          avatar: profile._json.avatar,
-          steamid: profile._json.steamid
-        }).save();
-      }
-      return done(null, user);
+    let user = await SteamUser.findOne({ steamid: profile.id });
+    console.log(profile.id)
+    if (!user) {
+      user = await new SteamUser({
+        id: profile.id,
+        name: profile._json.personaname,
+        avatar: profile._json.avatar,
+        steamid: profile._json.steamid
+      }).save();
+    }
+    return done(null, user);
   }
 ));
 
@@ -61,6 +62,8 @@ app.use(bodyParser.json());
 app.use('/api/steam', steamDataRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', steamRoutes);
+
+app.use('/api/posts', postRoutes);
 
 app.use('/api/games', gamesRoute);
 
