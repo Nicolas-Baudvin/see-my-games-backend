@@ -1,5 +1,9 @@
 # SEE MY GAMES BACKEND - NODE JS
 
+## Description
+
+Code source du back end pour l'application web See My Games
+
 ## Install
 
 ```bash
@@ -7,11 +11,11 @@
 ```
 
 ```bash
-    yarn install // or npm
+    yarn install # or npm
 ```
 
 ```bash
-    yarn start // or npm
+    yarn start # or npm
 ```
 
 ## ROADMAP
