@@ -1,9 +1,10 @@
 const Game = require('../Models/game');
 
 exports.add = (req, res, next) => {
-    if (req.body.name && req.body.imageURI && req.body.desc && req.body.release_date && req.body.ownerId) {
+    if (req.body.name && req.body.header_img && req.body.desc && req.body.release_date && req.body.ownerId) {
         const newGame = new Game({
-            ...req.body
+            ...req.body,
+            hand_added: true
         });
 
         newGame.save()
