@@ -4,6 +4,8 @@
 
 Code source du back end pour l'application web See My Games
 
+[repo front](https://github.com/Nicolas-Baudvin/see-my-games-front)
+
 ## Install
 
 ```bash
