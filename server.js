@@ -44,4 +44,18 @@ server.on('listening', () => {
   console.log('Listening on ' + bind);
 });
 
+// socket io
+const io = require('socket.io').listen(server);
+
+io.sockets.on('connection', (socket) => {
+  console.log("quelqu'un se connecte");
+  socket.emit('welcome_message', "Bienvenue se le chat");
+  socket.on('exchange_message', (data) => {
+    console.log(data);
+    // TODO: Logique d'échange de message / système de messagerie privée / système de channel
+  })
+} )
+
+
+
 server.listen(port);
