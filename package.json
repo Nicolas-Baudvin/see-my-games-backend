@@ -29,6 +29,7 @@
     "mongoose-unique-validator": "^2.0.3",
     "nodemailer": "^6.4.2",
     "passport": "^0.4.1",
-    "passport-steam": "^1.0.12"
+    "passport-steam": "^1.0.12",
+    "socket.io": "^2.3.0"
   }
 }
