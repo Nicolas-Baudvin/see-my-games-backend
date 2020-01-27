@@ -39,7 +39,7 @@ passport.use(new SteamStrategy({
     "realm": "http://localhost:5000/",
     "apiKey": process.env.API_KEY
 },
-(async(identifier, profile, done) => {
+(async (identifier, profile, done) => {
     profile.identifier = identifier;
 
     let user = await SteamUser.findOne({ "steamid": profile.id });
