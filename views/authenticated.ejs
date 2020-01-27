@@ -9,8 +9,8 @@
   Authenticated successfully.
 
   <script>
-    window.postMessage({
-      token: '<%= jwtToken %>',
+    window.opener.postMessage({
+      data: '<%= steamData %>',
       ok: true
     }, '<%= clientUrl %>');
     window.close();
