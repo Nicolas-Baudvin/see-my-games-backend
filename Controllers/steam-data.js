@@ -77,15 +77,8 @@ exports.summaries = (req, res, next) => {
                             if (!user) {
                                 return res.status(400).json({ "message": "Aucun profil trouvé" }); res.status(400).json({ "message": "Aucun profil trouvé" });
                             }
-
-                            const userData = [user].filter((item) => {
-                                if (item.password) {
-                                    return false;
-                                }
-                                return item;
-                            });
-
-                            res.status(200).json({ "message": "Votre compte steam est désormais lié à votre compte utilisateur", "user": userData[0] });
+                            user.password = undefined;
+                            res.status(200).json({ "message": "Votre compte steam est désormais lié à votre compte utilisateur", "user": JSON.parse((JSON.stringify(user))) });
                         })
                         .catch((err) => {
                             console.log(err);

@@ -107,44 +107,57 @@ exports.login = (req, res, next) => {
 };
 
 exports.delete = (req, res, next) => {
-    User.findOneAndDelete({ "username": req.body.username })
-        .then((doc) => {
-            console.log(doc);
-            if (!doc) {
-                return res.status(401).json({ "message": "Ce compte n'existe pas !" });
-            }
+    const { userId } = req.body;
+
+    User.deleteOne({ "_id": userId })
+        .then(() => {
+            console.log();
             res.status(200).json({ "message": "Votre compte a été supprimé" });
         })
         .catch((err) => {
-            res.status(500).json({ err });
+            res.status(500).json({ "message": "Une erreur est survenue avec le serveur, veuillez réessayer ou contacter l'administrateur du site", err });
         });
 };
 
 exports.update = (req, res, next) => {
     if (req.body.newUsername) {
-        User.findOneAndUpdate({ "username": req.body.currentUsername }, { "$set": { "username": req.body.newUsername } })
-            .then((doc) => {
-                if (!doc) {
-                    return res.status(400).json({ "message": "Ce pseudo n'existe pas" });
-                }
-                res.status(200).json({ "message": "Vos identifiants ont bien été modifiés" });
+        User.updateOne({ "_id": req.body.id }, { "username": req.body.newUsername })
+            .then(() => {
+                User.findOne({ "_id": req.body.id })
+                    .then((user) => {
+                        if (!user) {
+                            return res.status(400).json({ "message": "Ce compte n'existe pas !" });
+                        }
+
+                        user.password = undefined;
+
+                        res.status(200).json({ "message": "Votre pseudo a bien été modifié", "user": JSON.parse((JSON.stringify(user))) });
+                    })
+                    .catch((err) => {
+                        res.status(500).json({ err });
+                    });
             })
             .catch((err) => {
-                res.status(500).json({ err });
+                res.status(400).json({ err });
             });
     } else {
         return res.status(400).json({ "message": "Vous devez indiquer un nouveau pseudo valide !" });
     }
 };
 
-exports.mail_update = async(req, res, next) => {
+exports.mail_update = async (req, res, next) => {
     // send mail to confirm change
-    const user = User.findOne({ "_id": req.body.userId });
+    const { userId, email, confEmail } = req.body;
+
+    if (email !== confEmail) {
+        return res.status(400).json({ "message": "Les emails sont différents !" });
+    }
+    const user = await User.findOne({ "_id": userId });
 
     if (!user) {
         return res.status(400).json({ "message": "Vous n'êtes pas connecté !" });
     }
-    const token = jwt.sign({ "userId": user._id, "email": user.email, "new_email": req.body.new_email }, process.env.TOKEN_SECRET_KEY, { "expiresIn": "1h" });
+    const token = jwt.sign({ "userId": user._id, "email": user.email, "new_email": email }, process.env.TOKEN_SECRET_KEY, { "expiresIn": "1h" });
     const link = `http://localhost:5000/api/auth/confirm-email/${token}`;
     const smtpTransport = mailer.createTransport({
         "service": "gmail",
@@ -171,48 +184,52 @@ exports.mail_update = async(req, res, next) => {
     });
 };
 
-exports.pass_update = async(req, res, next) => {
+exports.pass_update = async (req, res, next) => {
     // send mail to confirm change
-    let token;
+    const { password, confPassword, userId } = req.body;
 
-    const user = await User.findOne({ "_id": req.body.userId });
+    if (password !== confPassword) {
+        return res.status(400).json({ "message": "Les mots de passes sont incorrects" });
+    }
+
+    const user = await User.findOne({ "_id": userId });
 
     if (!user) {
         return res.status(400).json({ "message": "Vous n'êtes pas connecté !" });
     }
 
-    bcrypt.hash(req.body.new_password, 10)
+    bcrypt.hash(password, 10)
         .then((hash) => {
-            token = jwt.sign({ "userId": user._id, "new_password": hash }, process.env.TOKEN_SECRET_KEY, { "expiresIn": "1h" });
+            const token = jwt.sign({ userId, "password": hash }, process.env.TOKEN_SECRET_KEY, { "expiresIn": "1h" });
+            const link = `http://localhost:5000/api/auth/confirm-password/${token}`;
+            const smtpTransport = mailer.createTransport({
+                "service": "gmail",
+                "auth": {
+                    "user": process.env.EMAIL_SMTP,
+                    "pass": process.env.EMAIL_PASSWORD
+                }
+            });
+            const mail = {
+                "from": process.env.EMAIL_SMTP,
+                "to": user.email,
+                "subject": "SMG - Confirmation de changement de mot de passe",
+                "html": mailType.password_confirm(link)
+            };
+
+            smtpTransport.sendMail(mail, (err, result) => {
+                if (err) {
+                    console.log("Erreur lors de l'envoie du mail: ", err);
+                    res.status(500).json({ "message": "Une erreur est survenue lors de l'envoie du mail, veuillez réessayer.", err });
+                } else {
+                    console.log("Mail envoyé !", result);
+                    res.status(200).json({ "message": "Un email de confirmation a été envoyé sur votre boite mail !" });
+                }
+            });
         })
         .catch((err) => {
             console.log(err);
             res.status(500).json({ err });
         });
-    const link = `http://localhost:5000/api/auth/confirm-password/${token}`;
-    const smtpTransport = mailer.createTransport({
-        "service": "gmail",
-        "auth": {
-            "user": process.env.EMAIL_SMTP,
-            "pass": process.env.EMAIL_PASSWORD
-        }
-    });
-    const mail = {
-        "from": process.env.EMAIL_SMTP,
-        "to": user.email,
-        "subject": "SMG - Confirmation de changement de mot de passe",
-        "html": mailType.password_confirm(link)
-    };
-
-    smtpTransport.sendMail(mail, (err, result) => {
-        if (err) {
-            console.log("Erreur lors de l'envoie du mail: ", err);
-            res.status(500).json({ "message": "Une erreur est survenue lors de l'envoie du mail, veuillez réessayer.", err });
-        } else {
-            console.log("Mail envoyé !", result);
-            res.status(200).json({ "message": "Un email de confirmation a été envoyé sur votre boite mail !" });
-        }
-    });
 };
 
 exports.confirm_mail_change = (req, res, next) => {
@@ -237,7 +254,7 @@ exports.confirm_password_change = (req, res, next) => {
     const token = req.params.token;
     const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
     const userId = decodedToken.userId;
-    const newPassword = decodedToken.new_password;
+    const newPassword = decodedToken.password;
 
     User.updateOne({ "_id": userId }, { "password": newPassword })
         .then(() => {
@@ -248,4 +265,4 @@ exports.confirm_password_change = (req, res, next) => {
             res.status(500).json({ err });
         });
 }
-;
+    ;
