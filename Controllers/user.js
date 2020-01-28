@@ -184,7 +184,7 @@ exports.mail_update = async (req, res, next) => {
     });
 };
 
-exports.pass_update = async (req, res, next) => {
+exports.pass_update = async(req, res, next) => {
     // send mail to confirm change
     const { password, confPassword, userId } = req.body;
 
@@ -264,5 +264,4 @@ exports.confirm_password_change = (req, res, next) => {
             console.log(err);
             res.status(500).json({ err });
         });
-}
-    ;
+};
