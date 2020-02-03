@@ -17,33 +17,36 @@ exports.games = (req, res, next) => {
                     "playtime_forever": game.playtime_forever,
                     "header_img": `https://steamcdn-a.akamaihd.net/steam/apps/${game.appid}/header.jpg?t=1571756795`,
                     "appid": game.appid,
-                    "ownerId": ownerId
+                    "ownerId": ownerId,
+                    "hand_added": false,
+                    "platform": "steam"
                 }).save()
                     .then(() => {
                         // jeu enregistré
-                        User.updateOne({ "_id": ownerId }, { "imported_games": true })
-                            .then(() => {
-                                User.findOne({ "_id": ownerId })
-                                    .then((user) => {
-                                        if (!user) {
-                                            return res.status(400).json({ "message": "Aucun profil trouvé" });
-                                        }
-                                        res.status(200).json({ "message": `${response.data.response.game_count} jeux ont été importé.`, user });
-                                    })
-                                    .catch((err) => {
-                                        console.log(err);
-                                        res.status(500).json({ err });
-                                    });
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                                res.status(500).json({ err });
-                            });
                     })
                     .catch((err) => {
                         res.status(500).json({ err });
                     });
             });
+
+            User.updateOne({ "_id": ownerId }, { "imported_games": true })
+                .then(() => {
+                    User.findOne({ "_id": ownerId })
+                        .then((user) => {
+                            if (!user) {
+                                return res.status(400).json({ "message": "Aucun profil trouvé" });
+                            }
+                            res.status(200).json({ "message": `${response.data.response.game_count} jeux ont été importé.`, user });
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                            res.status(500).json({ err });
+                        });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.status(500).json({ err });
+                });
         })
         .catch((err) => {
             console.log(err);
@@ -106,11 +109,27 @@ exports.game = (req, res, next) => {
     })
         .then((response) => {
             console.log(response.data);
-            res.status(200).json({ "message": "Envoie des données du jeu", "data": response.data[appid] });
+            res.status(200).json({ "message": "Envoie des données du jeu", "game": response.data[appid] });
         })
         .catch((err) => {
             console.log(err);
             res.status(400).json({ err });
         });
-}
-    ;
+};
+
+exports.recents_game = (req, res, next) => {
+    const { steamid } = req.params;
+
+    axios({
+        "method": "get",
+        "url": `${link}IPlayerService/GetRecentlyPlayedGames/v0001/?key=${process.env.API_KEY}&steamid=${steamid}&format=json`
+    })
+        .then((response) => {
+            console.log(response.data);
+            res.status(200).json({ "games": response.data.response.games });
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).json({ err });
+        });
+};
