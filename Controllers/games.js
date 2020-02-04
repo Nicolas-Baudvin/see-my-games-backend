@@ -31,14 +31,25 @@ exports.delete = (req, res, next) => {
 };
 
 exports.update = (req, res, next) => {
-    Game.updateOne({ "_id": req.params.id }, { ...req.body, "_id": req.params.id })
-        .then(() => res.status(200).json({ "message": "Votre jeu a bien été modifié !" }))
-        .catch((error) => res.status(400).json({ error }));
+    const { ownerId } = req.pararms;
+    const { name, header_img, desc, release_date, platform } = req.body;
+    
+    if (!ownerId) {
+        return res.status(400).json({ "message": "L'id du jeu n'est pas fournie" });
+    }
+    if (name || header_img || desc || release_date || platform) {
+
+        Game.updateOne({ "_id": req.params.id }, { ...req.body, "_id": req.params.id })
+            .then(() => res.status(200).json({ "message": "Votre jeu a bien été modifié !" }))
+            .catch((error) => res.status(400).json({ error }));
+    } else {
+        return res.status(400).json({ "message": "Au moins un champs doit être valide" });
+    }
 };
 
 exports.search = (req, res, next) => {
     const { ownerId } = req.params;
-    
+
     console.log(ownerId);
     Game.find({ "ownerId": ownerId })
         .then((games) => {
