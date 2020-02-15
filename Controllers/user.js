@@ -15,7 +15,8 @@ exports.signup = (req, res, next) => {
                         "email": req.body.email,
                         "username": req.body.username,
                         "password": hash,
-                        "imported_games": false
+                        "imported_games": false,
+                        "steam_is_linked": false
                     });
 
                     user.save()
@@ -44,7 +45,8 @@ exports.signup = (req, res, next) => {
                             res.status(201).json({ "message": "Votre compte a bien été créer" });
                         })
                         .catch((err) => {
-                            res.status(400).json({ err });
+                            console.log("err", err)
+                            res.status(400).json({ err, "message": "Erreur lors de l'envoie du mail" });
                         });
                 })
                 .catch((err) => {
@@ -145,7 +147,7 @@ exports.update = (req, res, next) => {
     }
 };
 
-exports.mail_update = async (req, res, next) => {
+exports.mail_update = async(req, res, next) => {
     // send mail to confirm change
     const { userId, email, confEmail } = req.body;
 
