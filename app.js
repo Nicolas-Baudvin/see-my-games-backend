@@ -35,8 +35,8 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 
 passport.use(new SteamStrategy({
-    "returnURL": "http://localhost:5000/api/auth/steam/return",
-    "realm": "http://localhost:5000/",
+    "returnURL": "https://seemygames.fr/api/auth/steam/return",
+    "realm": "https://seemygames.fr/",
     "apiKey": process.env.API_KEY
 },
 (async (identifier, profile, done) => {
