@@ -12,6 +12,7 @@ const passport = require("passport");
 const SteamStrategy = require("passport-steam").Strategy;
 const SteamUser = require("./Models/steam");
 const postRoutes = require("./Routes/posts-routes");
+const chatRoutes = require("./Routes/chat-routes");
 const newsletterRoutes = require("./Routes/newsletter");
 
 const app = express();
@@ -25,7 +26,7 @@ mongoose.connect(process.env.MONGO_CONNECTION_LINK,
     .catch(() => console.log("Connexion à MongoDB échouée !"));
 
 app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "https://www.seemygames.fr");
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
     res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
     next();
@@ -39,7 +40,7 @@ passport.use(new SteamStrategy({
     "realm": "https://seemygames.fr/",
     "apiKey": process.env.API_KEY
 },
-(async (identifier, profile, done) => {
+(async(identifier, profile, done) => {
     profile.identifier = identifier;
 
     let user = await SteamUser.findOne({ "steamid": profile.id });
@@ -72,7 +73,10 @@ app.use("/api/posts", postRoutes);
 app.use("/api/games", gamesRoute);
 
 // newsletter routes
-app.use("api/newsletter", newsletterRoutes);
+app.use("/api/newsletter", newsletterRoutes);
+
+// messages routes
+app.use("/api/chat", chatRoutes);
 
 
 module.exports = app;
