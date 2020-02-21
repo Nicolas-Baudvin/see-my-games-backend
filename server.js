@@ -64,14 +64,13 @@ let generalUsersOnline = [];
 
 general.on("connection", (socket) => {
     let userData;
-
     socket.on("exchange_message", (message) => socketCtrl.sendMessage(message, socket, general));
 
     socket.on("new_user", (user) => {
         socket.emit("welcome_message", `Bienvenue sur le chat "Général" de See My Games ${user.username}`);
         userData = user;
-        socket.user = { "username": user.username, "avatar": user.avatar };
-        generalUsersOnline.push(general.sockets[ socket.id ].user);
+        socket.user = { "username": user.username, "avatar": user.avatar, "socketId": socket.id, "globalSocketId": socket.conn.id };
+        generalUsersOnline.push(general.sockets[socket.id].user);
         general.emit("update_userlist", generalUsersOnline);
     });
 
@@ -99,8 +98,8 @@ steam.on("connection", (socket) => {
     socket.on("new_user", (user) => {
         socket.emit("welcome_message", `Bienvenue sur le chat "Steam" de See My Games ${user.username}`);
         userData = user;
-        socket.user = { "username": user.username, "avatar": user.avatar };
-        steamUsersOnline.push(steam.sockets[ socket.id ].user);
+        socket.user = { "username": user.username, "avatar": user.avatar, "socketId": socket.id, "globalSocketId": socket.conn.id };
+        steamUsersOnline.push(steam.sockets[socket.id].user);
         steam.emit("update_userlist", steamUsersOnline);
     });
 
@@ -128,19 +127,28 @@ other.on("connection", (socket) => {
     socket.on("new_user", (user) => {
         socket.emit("welcome_message", `Bienvenue sur le chat "Autre" de See My Games ${user.username}`);
         userData = user;
-        socket.user = { "username": user.username, "avatar": user.avatar };
-        otherUsersOnline.push(other.sockets[ socket.id ].user);
-        other.emit("update_userlist", otherUsersOnline );
+        socket.user = { "username": user.username, "avatar": user.avatar, "socketId": socket.id, "globalSocketId": socket.conn.id };
+        otherUsersOnline.push(other.sockets[socket.id].user);
+        other.emit("update_userlist", otherUsersOnline);
     });
 
     socket.on("disconnect", () => {
         otherUsersOnline = otherUsersOnline.filter((user) => {
-            if ( user && user.username !== userData.username) {
+            if (user && user.username !== userData.username) {
                 return user;
             }
         });
         other.emit("update_userlist", otherUsersOnline);
     });
+});
+
+/**
+ * Private Chat
+ */
+io.on("connection", (socket) => {
+    socket.on("private", (message) => socketCtrl.sendPrivateMessage(message, io, socket));
+    socket.on("disconnect", () => {
+    })
 });
 
 server.listen(port);
