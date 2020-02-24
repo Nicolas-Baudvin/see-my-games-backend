@@ -52,7 +52,7 @@ server.on("listening", () => {
  * Socket IO
  */
 const socketIo = require("socket.io");
-const io = socketIo(server, { "path": "/socketio" });
+const io = socketIo(server);
 const socketCtrl = require("./Controllers/socket");
 
 console.log("test", io);
