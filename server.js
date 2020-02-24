@@ -55,6 +55,8 @@ const socketIo = require("socket.io");
 const io = socketIo(server);
 const socketCtrl = require("./Controllers/socket");
 
+console.log(io);
+
 /**
  * Channel Général
  */
