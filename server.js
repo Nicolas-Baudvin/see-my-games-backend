@@ -52,10 +52,10 @@ server.on("listening", () => {
  * Socket IO
  */
 const socketIo = require("socket.io");
-const io = socketIo(server);
+const io = socketIo(server, { "path": "/socketio" });
 const socketCtrl = require("./Controllers/socket");
 
-console.log(io);
+console.log("test", io);
 
 /**
  * Channel Général
