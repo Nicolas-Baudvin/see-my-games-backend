@@ -64,6 +64,7 @@ let generalUsersOnline = [];
 
 general.on("connection", (socket) => {
     let userData;
+
     socket.on("exchange_message", (message) => socketCtrl.sendMessage(message, socket, general));
 
     socket.on("new_user", (user) => {
@@ -73,6 +74,8 @@ general.on("connection", (socket) => {
         generalUsersOnline.push(general.sockets[socket.id].user);
         general.emit("update_userlist", generalUsersOnline);
     });
+
+    socket.on("exchange_steamgame", (data) => socketCtrl.sendSteamGame(data, general, socket));
 
     socket.on("disconnect", () => {
         generalUsersOnline = generalUsersOnline.filter((user) => {
@@ -103,6 +106,8 @@ steam.on("connection", (socket) => {
         steam.emit("update_userlist", steamUsersOnline);
     });
 
+    socket.on("exchange_steamgame", (data) => socketCtrl.sendSteamGame(data, steam, socket));
+
     socket.on("disconnect", () => {
         steamUsersOnline = steamUsersOnline.filter((user) => {
             if (user && user.username !== userData.username) {
@@ -132,6 +137,8 @@ other.on("connection", (socket) => {
         other.emit("update_userlist", otherUsersOnline);
     });
 
+    socket.on("exchange_steamgame", (data) => socketCtrl.sendSteamGame(data, other, socket));
+
     socket.on("disconnect", () => {
         otherUsersOnline = otherUsersOnline.filter((user) => {
             if (user && user.username !== userData.username) {
@@ -148,7 +155,7 @@ other.on("connection", (socket) => {
 io.on("connection", (socket) => {
     socket.on("private", (message) => socketCtrl.sendPrivateMessage(message, io, socket));
     socket.on("disconnect", () => {
-    })
+    });
 });
 
 server.listen(port);
