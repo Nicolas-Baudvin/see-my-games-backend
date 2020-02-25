@@ -28,8 +28,6 @@ exports.sendMessage = (message, socket, namespace) => {
     });
     const messageToSend = { ...message, "time": `${h}h ${m}m ${s}s`, "_id": newMessage._id, "socketId": socket.id };
 
-    console.log(newMessage);
-
     newMessage.save()
         .then(() => {
             // message enregistré avec succès

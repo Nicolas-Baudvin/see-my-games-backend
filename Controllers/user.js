@@ -267,3 +267,7 @@ exports.confirm_password_change = (req, res, next) => {
             res.status(500).json({ err });
         });
 };
+
+exports.avatar = (req, res, next) => {
+    const { avatar } = req.body;
+}
