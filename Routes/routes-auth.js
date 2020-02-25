@@ -3,8 +3,8 @@ const auth = require("../Middlewares/auth");
 const router = express.Router();
 const userCtrl = require("../Controllers/user");
 
-router.post("/signup/", auth, userCtrl.signup);
-router.post("/login/", auth, userCtrl.login);
+router.post("/signup/", userCtrl.signup);
+router.post("/login/", userCtrl.login);
 router.delete("/delete/", auth, userCtrl.delete);
 router.post("/update/", auth, userCtrl.update);
 router.post("/change-email/", auth, userCtrl.mail_update);
