@@ -43,8 +43,10 @@ Code source du back end pour l'application web See My Games
 - [x] Suppression d'un article
 - [x] Envoie d'un ou des articles
 - [x] Mise en place de socket.io pour la réalisation d'un chat.
+- [x] Mise en place de plusieurs channels
+- [x] Mise en place d'une messagerie privée
+- [x] Les utilisateurs en ligne sont affichés
+- [x] Messages enregistrés dans la base de données (sauf privés)
 - [ ] Revue Globale de sécurité
-- [ ] Mise en place de plusieurs channels
-- [ ] Mise en place d'une messagerie privée
 - [ ] Mise en place d'un système de newsletters
 - [ ] Style des vues de confirmations email / mot de passe
