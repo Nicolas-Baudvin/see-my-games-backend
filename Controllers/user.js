@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mailer = require("nodemailer");
 const mailType = require("../Data/mail");
+const fs = require("fs");
 
 const User = require("../Models/user");
 
@@ -16,7 +17,8 @@ exports.signup = (req, res, next) => {
                         "username": req.body.username,
                         "password": hash,
                         "imported_games": false,
-                        "steam_is_linked": false
+                        "steam_is_linked": false,
+                        "avatar": "http:localhost:3000/src/assets/default-avatar.png"
                     });
 
                     user.save()
@@ -45,7 +47,7 @@ exports.signup = (req, res, next) => {
                             res.status(201).json({ "message": "Votre compte a bien été créer" });
                         })
                         .catch((err) => {
-                            console.log("err", err)
+                            console.log("err", err);
                             res.status(400).json({ err, "message": "Erreur lors de l'envoie du mail" });
                         });
                 })
@@ -95,6 +97,7 @@ exports.login = (req, res, next) => {
                         "steam_timecreated": user.steam_timecreated,
                         "steam_username": user.steam_username,
                         "imported_games": user.imported_games,
+                        "avatar": user.avatar,
                         token
                     });
                 })
@@ -268,6 +271,25 @@ exports.confirm_password_change = (req, res, next) => {
         });
 };
 
-exports.avatar = (req, res, next) => {
-    const { avatar } = req.body;
-}
+exports.avatar = async(req, res, next) => {
+    const token = req.headers.authorization.split(" ")[ 1 ];
+    const decoded = jwt.decode(token);
+
+    let img = `${req.file.path}`;
+    let avatar = {};
+
+    avatar.data = fs.readFileSync(img);
+    avatar.contentType = "image/png";
+
+    User.updateOne({ "_id": decoded.userId }, { "avatar": avatar })
+        .then(async() => {
+            const user = await User.findOne({ "_id": decoded.userId });
+
+            res.status(200).json({ "message": "avatar mis à jour", user });
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+
+
+};
