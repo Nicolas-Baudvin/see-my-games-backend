@@ -6,7 +6,7 @@ const userShema = mongoose.Schema({
     "username": { "type": String, "required": true, "unique": true },
     "email": { "type": String, "required": true, "unique": true },
     "password": { "type": String, "required": true },
-    "avatar": { "type": Buffer, "required": false },
+    "avatar": { "contentType": String, "data": Buffer, "required": false },
     "steam_is_linked": { "type": Boolean, "required": true },
     "steam_id": { "type": String, "required": false },
     "steam_username": { "type": String, "required": false },
