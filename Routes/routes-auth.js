@@ -38,5 +38,6 @@ router.post("/change-password/", auth, userCtrl.pass_update);
 router.get("/confirm-email/:token", auth, userCtrl.confirm_mail_change);
 router.get("/confirm-password/:token", auth, userCtrl.confirm_password_change);
 router.post("/new-avatar/", upload.single("avatar"), userCtrl.avatar);
+router.get("/session-checker/:userId", auth, userCtrl.sessionChecker);
 
 module.exports = router;

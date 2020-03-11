@@ -7,12 +7,12 @@ module.exports = (req, res, next) => {
         const userId = decode.userId;
 
 
-        if (req.body.userId && req.body.userId !== userId) {
-            throw "Userid non valable";
+        if ((req.body.userId || req.params.userId) && (req.body.userId || req.params.userId) !== userId) {
+            throw Error("Userid non valable");
         } else {
             next();
         }
     } catch (error) {
-        res.status(401).json({ "error": error | "Requête non authentifiée" });
+        res.status(401).json({ "error": error | "Requête non authentifiée", "message": "Votre session a expiré, veuillez vous reconnecter" });
     }
 };

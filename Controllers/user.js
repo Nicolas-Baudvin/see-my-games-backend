@@ -150,7 +150,7 @@ exports.update = (req, res, next) => {
     }
 };
 
-exports.mail_update = async(req, res, next) => {
+exports.mail_update = async (req, res, next) => {
     // send mail to confirm change
     const { userId, email, confEmail } = req.body;
 
@@ -189,7 +189,7 @@ exports.mail_update = async(req, res, next) => {
     });
 };
 
-exports.pass_update = async(req, res, next) => {
+exports.pass_update = async (req, res, next) => {
     // send mail to confirm change
     const { password, confPassword, userId } = req.body;
 
@@ -271,8 +271,8 @@ exports.confirm_password_change = (req, res, next) => {
         });
 };
 
-exports.avatar = async(req, res, next) => {
-    const token = req.headers.authorization.split(" ")[ 1 ];
+exports.avatar = async (req, res, next) => {
+    const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.decode(token);
 
     let img = `${req.file.path}`;
@@ -282,7 +282,7 @@ exports.avatar = async(req, res, next) => {
     avatar.contentType = "image/png";
 
     User.updateOne({ "_id": decoded.userId }, { "avatar": avatar })
-        .then(async() => {
+        .then(async () => {
             const user = await User.findOne({ "_id": decoded.userId });
 
             res.status(200).json({ "message": "avatar mis à jour", user });
@@ -292,4 +292,8 @@ exports.avatar = async(req, res, next) => {
         });
 
 
+};
+
+exports.sessionChecker = (req, res) => {
+    res.status(200).json({ "message": "ok" });
 };
